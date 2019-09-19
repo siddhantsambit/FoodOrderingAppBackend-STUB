@@ -48,26 +48,24 @@ public class RestaurantEntity implements Serializable {
     @NotNull
     private Integer numberOfCustomersRated;
 
-    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="address_id")
-    private AddressEntity addressOfRestaurant;
+    @NotNull
+    private AddressEntity address;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<CategoryEntity> catogeries = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<CategoryEntity> categories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "orderRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<OrderEntity> restaurantOrder = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(name = "restaurant_item", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<ItemEntity> items = new ArrayList<>();
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setId(int id) { this.id = id; }
 
     public String getUUID() {
         return UUID;
@@ -113,32 +111,22 @@ public class RestaurantEntity implements Serializable {
         return numberOfCustomersRated;
     }
 
-    public void setNumberOfCustomersRated(Integer numberOfCustomersRated) {
-        this.numberOfCustomersRated = numberOfCustomersRated;
+    public void setNumberOfCustomersRated(Integer numberOfCustomersRated) { this.numberOfCustomersRated = numberOfCustomersRated; }
+
+    public AddressEntity getAddress() {
+        return address;
     }
 
-    public AddressEntity getAddressOfRestaurant() {
-        return addressOfRestaurant;
+    public void setAddress(AddressEntity address) {
+        this.address = address;
     }
 
-    public void setAddressOfRestaurant(AddressEntity addressOfRestaurant) {
-        this.addressOfRestaurant = addressOfRestaurant;
+    public List<CategoryEntity> getCategories() {
+        return categories;
     }
 
-    public List<CategoryEntity> getCatogeries() {
-        return catogeries;
-    }
-
-    public void setCatogeries(List<CategoryEntity> catogeries) {
-        this.catogeries = catogeries;
-    }
-
-    public List<OrderEntity> getRestaurantOrder() {
-        return restaurantOrder;
-    }
-
-    public void setRestaurantOrder(List<OrderEntity> restaurantOrder) {
-        this.restaurantOrder = restaurantOrder;
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
     }
 
     public List<ItemEntity> getItems() {

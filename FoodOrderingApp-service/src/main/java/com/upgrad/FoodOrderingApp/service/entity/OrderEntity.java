@@ -19,28 +19,26 @@ public class OrderEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="uuid")
     @NotNull
     @Size(max=200)
-    private String UUID;
+    private String uuid;
 
     @Column(name="bill")
+    @NotNull
     private BigDecimal bill;
 
-    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name="coupon_id")
+    @NotNull
     private CoupanEntity coupan;
 
-
     @Column(name="discount")
+    @NotNull
     private BigDecimal discount;
 
-//    @Column(name="date")
-//    private Date date;
-
-    @Temporal(TemporalType.DATE)
     @Column(name="date")
     @NotNull
     private Date date;
@@ -51,31 +49,30 @@ public class OrderEntity implements Serializable {
 
     @ManyToOne(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="customer_id")
-    private CustomerEntity customerMappedInOrder;
+    @NotNull
+    private CustomerEntity customer;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="address_id")
-    private AddressEntity addressOfOrders;
+    @NotNull
+    private AddressEntity address;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="restaurant_id")
-    private RestaurantEntity orderRestaurant;
+    @NotNull
+    private RestaurantEntity restaurant;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getUUID() {
-        return UUID;
-    }
+    public String getUuid() { return uuid; }
 
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
-    }
+    public void setUuid(String uuid) { this.uuid = uuid; }
 
     public BigDecimal getBill() {
         return bill;
@@ -117,29 +114,17 @@ public class OrderEntity implements Serializable {
         this.payment = payment;
     }
 
-    public CustomerEntity getCustomerMappedInOrder() {
-        return customerMappedInOrder;
-    }
+    public CustomerEntity getCustomer() { return customer; }
 
-    public void setCustomerMappedInOrder(CustomerEntity customerMappedInOrder) {
-        this.customerMappedInOrder = customerMappedInOrder;
-    }
+    public void setCustomer(CustomerEntity customer) { this.customer = customer; }
 
-    public AddressEntity getAddressOfOrders() {
-        return addressOfOrders;
-    }
+    public AddressEntity getAddress() { return address; }
 
-    public void setAddressOfOrders(AddressEntity addressOfOrders) {
-        this.addressOfOrders = addressOfOrders;
-    }
+    public void setAddress(AddressEntity address) { this.address = address; }
 
-    public RestaurantEntity getOrderRestaurant() {
-        return orderRestaurant;
-    }
+    public RestaurantEntity getRestaurant() { return restaurant; }
 
-    public void setOrderRestaurant(RestaurantEntity orderRestaurant) {
-        this.orderRestaurant = orderRestaurant;
-    }
+    public void setRestaurant(RestaurantEntity restaurant) { this.restaurant = restaurant; }
 
     @Override
     public boolean equals(Object obj) {

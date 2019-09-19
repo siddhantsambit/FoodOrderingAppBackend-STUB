@@ -30,8 +30,16 @@ public class CategoryEntity implements Serializable {
     @Size(max=255)
     private String categoryName;
 
-    @ManyToMany(mappedBy = "catogeries", fetch=FetchType.LAZY)
-    private List<RestaurantEntity> restaurantCategory = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "category_item", joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    private List<ItemEntity> items = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
+    private List<RestaurantEntity> restaurants = new ArrayList<>();
+
 
     public int getId() {
         return id;
@@ -57,13 +65,13 @@ public class CategoryEntity implements Serializable {
         this.categoryName = categoryName;
     }
 
-    public List<RestaurantEntity> getRestaurantCategory() {
-        return restaurantCategory;
-    }
+    public List<ItemEntity> getItems() { return items; }
 
-    public void setRestaurantCategory(List<RestaurantEntity> restaurantCategory) {
-        this.restaurantCategory = restaurantCategory;
-    }
+    public void setItems(List<ItemEntity> items) { this.items = items; }
+
+    public List<RestaurantEntity> getRestaurants() { return restaurants; }
+
+    public void setRestaurants(List<RestaurantEntity> restaurants) { this.restaurants = restaurants; }
 
     @Override
     public boolean equals(Object obj) {

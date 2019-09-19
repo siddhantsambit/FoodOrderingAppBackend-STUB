@@ -53,11 +53,11 @@ public class AddressEntity implements Serializable {
     @Column(name="active", columnDefinition = "integer default 1")
     private Integer active;
 
-    @ManyToMany(mappedBy="address", fetch=FetchType.LAZY)
-    private List<CustomerEntity> customer = new ArrayList<>();
+    @ManyToOne
+    @JoinTable(name = "customer_address", joinColumns = @JoinColumn(name = "address_id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_id"))
+    private CustomerEntity customer;
 
-    @OneToMany(mappedBy = "addressOfOrders", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<OrderEntity> ordersFromAddress = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -123,21 +123,9 @@ public class AddressEntity implements Serializable {
         this.active = active;
     }
 
-    public List<CustomerEntity> getCustomer() {
-        return customer;
-    }
+    public CustomerEntity getCustomer() { return customer; }
 
-    public void setCustomer(List<CustomerEntity> customer) {
-        this.customer = customer;
-    }
-
-    public List<OrderEntity> getOrdersFromAddress() {
-        return ordersFromAddress;
-    }
-
-    public void setOrdersFromAddress(List<OrderEntity> ordersFromAddress) {
-        this.ordersFromAddress = ordersFromAddress;
-    }
+    public void setCustomer(CustomerEntity customer) { this.customer = customer; }
 
     @Override
     public boolean equals(Object obj) {

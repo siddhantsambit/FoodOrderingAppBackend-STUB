@@ -16,15 +16,15 @@ public class OrderItemEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="order_id")
     @NotNull
-    private OrderEntity orderId;
+    private OrderEntity order;
 
     @Column(name="item_id")
     @NotNull
-    private ItemEntity itemId;
+    private ItemEntity item;
 
     @Column(name="quantity")
     @NotNull
@@ -34,28 +34,28 @@ public class OrderItemEntity implements Serializable {
     @NotNull
     private Integer price;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public OrderEntity getOrderId() {
-        return orderId;
+    public OrderEntity getOrder() {
+        return order;
     }
 
-    public void setOrderId(OrderEntity orderId) {
-        this.orderId = orderId;
+    public void setOrder(OrderEntity order) {
+        this.order = order;
     }
 
-    public ItemEntity getItemId() {
-        return itemId;
+    public ItemEntity getItem() {
+        return item;
     }
 
-    public void setItemId(ItemEntity itemId) {
-        this.itemId = itemId;
+    public void setItem(ItemEntity item) {
+        this.item = item;
     }
 
     public Integer getQuantity() {

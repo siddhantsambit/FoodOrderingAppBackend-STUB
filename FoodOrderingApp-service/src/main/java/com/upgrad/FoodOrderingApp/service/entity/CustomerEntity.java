@@ -11,6 +11,12 @@ import java.util.List;
 
 @Entity
 @Table(name="customer", schema = "restaurantdb")
+
+@NamedQueries({
+        @NamedQuery(name = "customerByContactNumber", query = "select u from CustomerEntity u where u.contactNumber = :contactNumber"),
+        @NamedQuery(name = "customerByUUID", query = "select u from CustomerEntity u where u.uuid = :uuid"),
+})
+
 public class CustomerEntity implements Serializable {
 
     @Id
@@ -34,6 +40,7 @@ public class CustomerEntity implements Serializable {
 
     @Column(name="email")
     @Size(max=50)
+    @NotNull
     private String email;
 
     @Column(name="contact_number", unique = true)
@@ -51,11 +58,14 @@ public class CustomerEntity implements Serializable {
     @Size(max=255)
     private String salt;
 
-    @ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<AddressEntity> address = new ArrayList<>();
+    @OneToMany
+    @JoinTable(name = "customer_address", joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    private List<AddressEntity> addresses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customerMappedInOrder", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<OrderEntity> customerOrders = new ArrayList<>();
+    public List<AddressEntity> getAddresses() { return addresses; }
+
+    public void setAddresses(List<AddressEntity> addresses) { this.addresses = addresses; }
 
     public int getId() {
         return id;
@@ -119,22 +129,6 @@ public class CustomerEntity implements Serializable {
 
     public void setSalt(String salt) {
         this.salt = salt;
-    }
-
-    public List<AddressEntity> getAddress() {
-        return address;
-    }
-
-    public void setAddress(List<AddressEntity> address) {
-        this.address = address;
-    }
-
-    public List<OrderEntity> getCustomerOrders() {
-        return customerOrders;
-    }
-
-    public void setCustomerOrders(List<OrderEntity> customerOrders) {
-        this.customerOrders = customerOrders;
     }
 
     @Override

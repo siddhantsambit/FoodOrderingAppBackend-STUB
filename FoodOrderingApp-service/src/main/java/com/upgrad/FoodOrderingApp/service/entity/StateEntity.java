@@ -19,9 +19,9 @@ public class StateEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
-    @Column(name="uuid", unique = true)
+    @Column(name="uuid")
     @NotNull
     @Size(max=200)
     private String uuid;
@@ -31,14 +31,18 @@ public class StateEntity implements Serializable {
     @Size(max=30)
     private String stateName;
 
-    @OneToMany(mappedBy = "state", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<AddressEntity> addressMappdedInState = new ArrayList<>();
+    public StateEntity() {}
 
-    public int getId() {
+    public StateEntity(String uuid, String name) {
+        this.uuid = uuid;
+        this.stateName = name;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -56,14 +60,6 @@ public class StateEntity implements Serializable {
 
     public void setStateName(String stateName) {
         this.stateName = stateName;
-    }
-
-    public List<AddressEntity> getAddressMappdedInState() {
-        return addressMappdedInState;
-    }
-
-    public void setAddressMappdedInState(List<AddressEntity> addressMappdedInState) {
-        this.addressMappdedInState = addressMappdedInState;
     }
 
     @Override

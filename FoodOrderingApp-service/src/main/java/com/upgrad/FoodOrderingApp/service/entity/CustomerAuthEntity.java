@@ -10,56 +10,62 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name="customer_auth", schema = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(name = "customerByAccessToken", query = "select u from CustomerAuthEntity u where u.accessToken = :accessToken"),
+})
+
 public class CustomerAuthEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="uuid", unique = true)
     @NotNull
     @Size(max=200)
-    private String UUID;
+    private String uuid;
 
-    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="customer_id")
     @NotNull
     private CustomerEntity customer;
 
     @Column(name="access_token")
+    @NotNull
     @Size(max=500)
     private String accessToken;
 
     @Column(name="login_at")
     @NotNull
-    private Timestamp loginAt;
+    private ZonedDateTime loginAt;
 
     @Column(name="expires_at")
     @NotNull
-    private Timestamp expiresAt;
+    private ZonedDateTime expiresAt;
 
     @Column(name="logout_at")
-    private Timestamp logoutAt;
+    private ZonedDateTime logoutAt;
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getUUID() {
-        return UUID;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public CustomerEntity getCustomer() {
@@ -78,27 +84,28 @@ public class CustomerAuthEntity implements Serializable {
         this.accessToken = accessToken;
     }
 
-    public Timestamp getLoginAt() {
+
+    public ZonedDateTime getLoginAt() {
         return loginAt;
     }
 
-    public void setLoginAt(Timestamp loginAt) {
+    public void setLoginAt(ZonedDateTime loginAt) {
         this.loginAt = loginAt;
     }
 
-    public Timestamp getExpiresAt() {
+    public ZonedDateTime getExpiresAt() {
         return expiresAt;
     }
 
-    public void setExpiresAt(Timestamp expiresAt) {
+    public void setExpiresAt(ZonedDateTime expiresAt) {
         this.expiresAt = expiresAt;
     }
 
-    public Timestamp getLogoutAt() {
+    public ZonedDateTime getLogoutAt() {
         return logoutAt;
     }
 
-    public void setLogoutAt(Timestamp logoutAt) {
+    public void setLogoutAt(ZonedDateTime logoutAt) {
         this.logoutAt = logoutAt;
     }
 
