@@ -14,6 +14,11 @@ import java.util.Date;
 
 @Entity
 @Table(name="orders", schema = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(name = "ordersByAddress", query = "select o from OrderEntity o where o.address = :address"),
+
+})
+
 public class OrderEntity implements Serializable {
 
     @Id

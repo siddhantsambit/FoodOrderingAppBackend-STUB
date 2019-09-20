@@ -14,6 +14,10 @@ import java.util.List;
 
 @Entity
 @Table(name="address", schema = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(name = "addressByUUID", query = "select a from AddressEntity a where a.uuid = :uuid"),
+})
+
 public class AddressEntity implements Serializable {
 
     @Id
@@ -24,12 +28,12 @@ public class AddressEntity implements Serializable {
     @Column(name="uuid", unique = true)
     @NotNull
     @Size(max=200)
-    private String UUID;
+    private String uuid;
 
     @Column(name="flat_buil_number")
     @NotNull
     @Size(max=225)
-    private String flatBuilNumber;
+    private String flatBuilNo;
 
     @Column(name="locality")
     @NotNull
@@ -67,21 +71,13 @@ public class AddressEntity implements Serializable {
         this.id = id;
     }
 
-    public String getUUID() {
-        return UUID;
-    }
+    public String getUuid() { return uuid; }
 
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
-    }
+    public void setUuid(String uuid) { this.uuid = uuid; }
 
-    public String getFlatBuilNumber() {
-        return flatBuilNumber;
-    }
+    public String getFlatBuilNo() { return flatBuilNo; }
 
-    public void setFlatBuilNumber(String flatBuilNumber) {
-        this.flatBuilNumber = flatBuilNumber;
-    }
+    public void setFlatBuilNo(String flatBuilNo) { this.flatBuilNo = flatBuilNo; }
 
     public String getLocality() {
         return locality;

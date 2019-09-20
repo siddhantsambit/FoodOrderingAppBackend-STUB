@@ -14,6 +14,11 @@ import java.util.List;
 
 @Entity
 @Table(name="state", schema = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(name = "stateByUuid", query = "select s from StateEntity s where s.uuid = :uuid"),
+        @NamedQuery(name = "getAllStates", query = "select s from StateEntity s"),
+})
+
 public class StateEntity implements Serializable {
 
     @Id
