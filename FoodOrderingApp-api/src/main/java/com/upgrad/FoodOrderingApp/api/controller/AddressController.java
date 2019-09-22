@@ -1,14 +1,14 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.businness.AddressService;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.business.AddressService;
+import com.upgrad.FoodOrderingApp.service.business.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
-import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,11 +28,29 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
+    /**
+     * This api endpoint is used to save address for a customer
+     *
+     * @request SaveAddressRequest requests for all the attributes
+     * @param authorization customer login access token in 'Bearer <access-token>' format
+     *
+     * @return ResponseEntity<SaveAddressResponse> type object along with HttpStatus Ok
+     *
+     * @throws AuthorizationFailedException If the access token provided by the customer does not exist in the database
+     * @throws AuthorizationFailedException If the access token provided by the customer exists in the database, but the customer has already logged out
+     * @throws AuthorizationFailedException If the access token provided by the customer exists in the database, but the session has expired
+     * @throws SaveAddressException If any field is empty
+     * @throws SaveAddressException If the pincode entered is invalid
+     * @throws AddressNotFoundException If the state uuid entered does not exist in the database
+     */
+
     @CrossOrigin
     @RequestMapping(method = RequestMethod.POST, path = "/address", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SaveAddressResponse> saveAddress(@RequestBody(required = false) final SaveAddressRequest saveAddressRequest,
-                                                           @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
-
+    public ResponseEntity<SaveAddressResponse> saveAddress(
+            @RequestBody(required = false) final SaveAddressRequest saveAddressRequest,
+            @RequestHeader("authorization") final String authorization)
+            throws AuthorizationFailedException, SaveAddressException, AddressNotFoundException
+    {
         String accessToken = authorization.split("Bearer ")[1];
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
@@ -48,10 +66,20 @@ public class AddressController {
         final AddressEntity savedAddress = addressService.saveAddress(address, customerEntity);
         SaveAddressResponse addressResponse = new SaveAddressResponse().id(savedAddress.getUuid()).status("ADDRESS SUCCESSFULLY REGISTERED");
         return new ResponseEntity<SaveAddressResponse>(addressResponse, HttpStatus.CREATED);
-
     }
 
-    /* Method to fetch the list of addresses of customer if the customer is authorized based on the access-token*/
+    /**
+     * This api endpoint is used retrieve all the saved addresses in the database, for a customer
+     *
+     *@param authorization customer login access token in 'Bearer <access-token>' format
+     *
+     * @return ResponseEntity<AddressListResponse> type object along with HttpStatus OK
+     *
+     * @throws AuthorizationFailedException If the access token provided by the customer does not exist in the database
+     * @throws AuthorizationFailedException If the access token provided by the customer exists in the database, but the customer has already logged out
+     * @throws AuthorizationFailedException If the access token provided by the customer exists in the database, but the session has expired
+     */
+
     @RequestMapping(method = RequestMethod.GET, path = "/address/customer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AddressListResponse> getAllSavedAddresses(
             @RequestHeader("authorization") final String authorization)
@@ -60,9 +88,10 @@ public class AddressController {
         String accessToken = authorization.split("Bearer ")[1];
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
-        // Get list of addresses
+        // Get all saved addresses
         List<AddressEntity> addressesList = addressService.getAllAddress(customerEntity);
 
+        // Create Response for saved addresses
         AddressListResponse addressListResponse = new AddressListResponse();
 
         for (AddressEntity addressEntity : addressesList) {
@@ -73,14 +102,55 @@ public class AddressController {
                     .city(addressEntity.getCity())
                     .pincode(addressEntity.getPincode())
                     .state(new AddressListState().id(UUID.fromString(addressEntity.getState().getUuid()))
-                            .stateName(addressEntity.getState().getStateName()));
+                            .stateName(addressEntity.getState().getStatename()));
             addressListResponse.addAddressesItem(addressesResponse);
         }
 
         return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
     }
 
-    /* Delete the address if the customer is authorized based on access token check*/
+
+    /**
+     * This api endpoint is used retrieve all the states in the database
+     *
+     * @return ResponseEntity<StatesListResponse> type object along with HttpStatus OK
+     *
+     * @throws AuthorizationFailedException If the access token provided by the customer does not exist in the database
+     * @throws AuthorizationFailedException If the access token provided by the customer exists in the database, but the customer has already logged out
+     * @throws AuthorizationFailedException If the access token provided by the customer exists in the database, but the session has expired
+     * @throws AuthorizationFailedException If the access token provided by the customer exists in the database, but the user who has logged in is not the same user who has created the address
+     * @throws AddressNotFoundException If address id field is empty
+     * @throws AddressNotFoundException If address id entered is incorrect
+     */
+
+    @RequestMapping(method = RequestMethod.GET, path = "/states", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<StatesListResponse> getAllStates()
+    {
+        // Get all states
+        List<StateEntity> statesList = addressService.getAllStates();
+
+        // Response for Get All States
+        StatesListResponse statesListResponse = new StatesListResponse();
+
+        for (StateEntity stateEntity : statesList) {
+            StatesList listState = new StatesList()
+                    .id(UUID.fromString(stateEntity.getUuid()))
+                    .stateName(stateEntity.getStatename());
+            statesListResponse.addStatesItem(listState);
+        }
+
+        return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
+    }
+
+    /**
+     * This api endpoint is used to delete an address
+     *
+     * @param addressID Address uuid is used to fetch the correct address
+     * @param authorization customer login access token in 'Bearer <access-token>' format
+     *
+     * @return ResponseEntity<DeleteAddResponse> with HTTP status ok
+     */
+
     @RequestMapping(method = RequestMethod.DELETE, path = "/address/{address_id}")
     public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(
             @PathVariable("address_id") final String addressID,
@@ -99,26 +169,4 @@ public class AddressController {
         DeleteAddressResponse addDeleteResponse = new DeleteAddressResponse().id(UUID.fromString(deletedAddressEntity.getUuid())).status("ADDRESS DELETED SUCCESSFULLY");
         return new ResponseEntity<DeleteAddressResponse>(addDeleteResponse, HttpStatus.OK);
     }
-
-    /* API endpoint to retrieve all states from the database*/
-    @RequestMapping(method = RequestMethod.GET, path = "/states", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<StatesListResponse> getAllStates()
-    {
-        // Get all states
-        List<StateEntity> statesList = addressService.getAllStates();
-
-
-        StatesListResponse statesListResponse = new StatesListResponse();
-
-        for (StateEntity stateEntity : statesList) {
-            StatesList listState = new StatesList()
-                    .id(UUID.fromString(stateEntity.getUuid()))
-                    .stateName(stateEntity.getStateName());
-            statesListResponse.addStatesItem(listState);
-        }
-
-        return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
-    }
 }
-
-

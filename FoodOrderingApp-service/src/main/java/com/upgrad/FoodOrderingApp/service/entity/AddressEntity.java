@@ -1,60 +1,59 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * AddressEntity class contains all the attributes to be mapped to all the fields in 'address' table in the database
+ */
 @Entity
-@Table(name="address", schema = "restaurantdb")
-@NamedQueries({
-        @NamedQuery(name = "addressByUUID", query = "select a from AddressEntity a where a.uuid = :uuid"),
-})
-
-public class AddressEntity implements Serializable {
+@Table(name = "address")
+@NamedQueries(
+        {
+                @NamedQuery(name = "allAddresses", query = "select q from AddressEntity q"),
+                @NamedQuery(name = "addressByUUID", query = "select a from AddressEntity a where a.uuid = :uuid")
+        }
+)
+public class AddressEntity implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
+    private Integer id;
 
-    @Column(name="uuid", unique = true)
+    @Column(name = "uuid")
     @NotNull
-    @Size(max=200)
+    @Size(max = 200)
     private String uuid;
 
-    @Column(name="flat_buil_number")
+    @Column(name = "flat_buil_number")
     @NotNull
-    @Size(max=225)
+    @Size(max = 255)
     private String flatBuilNo;
 
-    @Column(name="locality")
+    @Column(name = "locality")
     @NotNull
-    @Size(max=225)
+    @Size(max = 255)
     private String locality;
 
-    @Column(name="city")
+    @Column(name = "city")
     @NotNull
-    @Size(max=30)
+    @Size(max = 30)
     private String city;
 
-    @Column(name="pincode")
+    @Column(name = "pincode")
     @NotNull
-    @Size(max=30)
+    @Size(max = 30)
     private String pincode;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="state_id")
+    @ManyToOne
+    @JoinColumn(name = "state_id")
+    @NotNull
     private StateEntity state;
 
-    @Column(name="active", columnDefinition = "integer default 1")
+    @Column(name = "active")
+    @NotNull
     private Integer active;
 
     @ManyToOne
@@ -62,22 +61,49 @@ public class AddressEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "customer_id"))
     private CustomerEntity customer;
 
+    public AddressEntity() {}
 
-    public int getId() {
+    public AddressEntity(String uuid, String flatBuilNo, String locality, String city, String pincode, StateEntity stateEntity) {
+        this.uuid = uuid;
+        this.flatBuilNo = flatBuilNo;
+        this.locality = locality;
+        this.city = city;
+        this.pincode = pincode;
+        this.state = stateEntity;
+        this.active = 1;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customerEntity) {
+        this.customer = customerEntity;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getUuid() { return uuid; }
+    public String getUuid() {
+        return uuid;
+    }
 
-    public void setUuid(String uuid) { this.uuid = uuid; }
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
-    public String getFlatBuilNo() { return flatBuilNo; }
+    public String getFlatBuilNo() {
+        return flatBuilNo;
+    }
 
-    public void setFlatBuilNo(String flatBuilNo) { this.flatBuilNo = flatBuilNo; }
+    public void setFlatBuilNo(String flatNumber) {
+        this.flatBuilNo = flatNumber;
+    }
 
     public String getLocality() {
         return locality;
@@ -117,24 +143,5 @@ public class AddressEntity implements Serializable {
 
     public void setActive(Integer active) {
         this.active = active;
-    }
-
-    public CustomerEntity getCustomer() { return customer; }
-
-    public void setCustomer(CustomerEntity customer) { this.customer = customer; }
-
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

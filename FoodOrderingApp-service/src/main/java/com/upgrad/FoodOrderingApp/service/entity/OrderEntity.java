@@ -1,10 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,60 +7,77 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * OrderEntity class contains all the attributes to be mapped to all the fields in 'orders' table in the database
+ */
 @Entity
-@Table(name="orders", schema = "restaurantdb")
+@Table(name = "orders")
 @NamedQueries({
-        @NamedQuery(name = "ordersByAddress", query = "select o from OrderEntity o where o.address = :address"),
-
+        @NamedQuery(name = "ordersByAddress", query = "select q from OrderEntity q where q.address = :address"),
+        @NamedQuery(name = "ordersByCustomer", query = "select q from OrderEntity q where q.customer = :customer order by q.date desc "),
+        @NamedQuery(name = "ordersByRestaurant", query = "select q from OrderEntity q where q.restaurant = :restaurant"),
 })
-
 public class OrderEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Integer id;
 
-    @Column(name="uuid")
+    @Column(name = "uuid")
     @NotNull
-    @Size(max=200)
+    @Size(max = 200)
     private String uuid;
 
-    @Column(name="bill")
+    @Column(name = "bill")
     @NotNull
     private BigDecimal bill;
 
-    @ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name="coupon_id")
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
     @NotNull
-    private CoupanEntity coupan;
+    private CouponEntity coupon;
 
-    @Column(name="discount")
+    @Column(name = "discount")
     @NotNull
     private BigDecimal discount;
 
-    @Column(name="date")
+    @Column(name = "date")
     @NotNull
     private Date date;
 
-    @OneToOne(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="payment_id")
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    @NotNull
     private PaymentEntity payment;
 
-    @ManyToOne(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="customer_id")
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
     @NotNull
     private CustomerEntity customer;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="address_id")
+    @ManyToOne
+    @JoinColumn(name = "address_id")
     @NotNull
     private AddressEntity address;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="restaurant_id")
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
     @NotNull
     private RestaurantEntity restaurant;
+
+    public OrderEntity() {}
+
+    public OrderEntity(@NotNull @Size(max = 200) String uuid, @NotNull Double bill, @NotNull CouponEntity coupon, @NotNull Double discount, @NotNull Date date, @NotNull PaymentEntity payment, @NotNull CustomerEntity customer, @NotNull AddressEntity address, RestaurantEntity restaurant) {
+        this.uuid = uuid;
+        this.bill = new BigDecimal(bill);
+        this.coupon = coupon;
+        this.discount = new BigDecimal(discount);
+        this.date = date;
+        this.payment = payment;
+        this.customer = customer;
+        this.address = address;
+        this.restaurant = restaurant;
+    }
 
     public Integer getId() {
         return id;
@@ -75,32 +87,36 @@ public class OrderEntity implements Serializable {
         this.id = id;
     }
 
-    public String getUuid() { return uuid; }
-
-    public void setUuid(String uuid) { this.uuid = uuid; }
-
-    public BigDecimal getBill() {
-        return bill;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setBill(BigDecimal bill) {
-        this.bill = bill;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
-    public CoupanEntity getCoupan() {
-        return coupan;
+    public Double getBill() {
+        return bill.doubleValue();
     }
 
-    public void setCoupan(CoupanEntity coupan) {
-        this.coupan = coupan;
+    public void setBill(Double bill) {
+        this.bill = new BigDecimal(bill);
     }
 
-    public BigDecimal getDiscount() {
-        return discount;
+    public CouponEntity getCoupon() {
+        return coupon;
     }
 
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
+    public void setCoupon(CouponEntity coupon) {
+        this.coupon = coupon;
+    }
+
+    public Double getDiscount() {
+        return discount.doubleValue();
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = new BigDecimal(discount);
     }
 
     public Date getDate() {
@@ -119,30 +135,27 @@ public class OrderEntity implements Serializable {
         this.payment = payment;
     }
 
-    public CustomerEntity getCustomer() { return customer; }
-
-    public void setCustomer(CustomerEntity customer) { this.customer = customer; }
-
-    public AddressEntity getAddress() { return address; }
-
-    public void setAddress(AddressEntity address) { this.address = address; }
-
-    public RestaurantEntity getRestaurant() { return restaurant; }
-
-    public void setRestaurant(RestaurantEntity restaurant) { this.restaurant = restaurant; }
-
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
+    public CustomerEntity getCustomer() {
+        return customer;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    public AddressEntity getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressEntity address) {
+        this.address = address;
+    }
+
+    public RestaurantEntity getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(RestaurantEntity restaurant) {
+        this.restaurant = restaurant;
     }
 }

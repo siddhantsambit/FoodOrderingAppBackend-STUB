@@ -4,10 +4,11 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * CustomerAddressEntity class contains all the attributes to be mapped to all the fields in 'customer_address' table in the database
+ */
 @Entity
 @Table(name = "customer_address")
-
-
 public class CustomerAddressEntity implements Serializable {
 
     @Id

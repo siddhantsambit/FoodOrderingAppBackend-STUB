@@ -1,46 +1,40 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * StateEntity class contains all the attributes to be mapped to all the fields in 'state' table in the database
+ */
 @Entity
-@Table(name="state", schema = "restaurantdb")
+@Table(name = "state")
 @NamedQueries({
-        @NamedQuery(name = "stateByUuid", query = "select s from StateEntity s where s.uuid = :uuid"),
-        @NamedQuery(name = "getAllStates", query = "select s from StateEntity s"),
+        @NamedQuery(name = "stateByUUID", query = "select c from StateEntity c where c.uuid = :uuid"),
+        @NamedQuery(name = "allStates", query = "select q from StateEntity q"),
 })
-
 public class StateEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Integer id;
 
-    @Column(name="uuid")
+    @Column(name = "uuid")
     @NotNull
-    @Size(max=200)
+    @Size(max = 200)
     private String uuid;
 
-    @Column(name="state_name")
+    @Column(name = "state_name")
     @NotNull
-    @Size(max=30)
-    private String stateName;
+    @Size(max = 30)
+    private String statename;
 
     public StateEntity() {}
 
     public StateEntity(String uuid, String name) {
         this.uuid = uuid;
-        this.stateName = name;
+        this.statename = name;
     }
 
     public Integer getId() {
@@ -59,26 +53,12 @@ public class StateEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getStateName() {
-        return stateName;
+    public String getStatename() {
+        return statename;
     }
 
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
+    public void setStatename(String statename) {
+        this.statename = statename;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
 }

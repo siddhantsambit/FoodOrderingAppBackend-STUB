@@ -1,45 +1,47 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * OrderItemEntity class contains all the attributes to be mapped to all the fields in 'order_item' table in the database
+ */
 @Entity
-@Table(name="order_item", schema = "restaurantdb")
+@Table(name = "order_item")
+@NamedQueries({
+        @NamedQuery(name = "itemsByOrder", query = "select q from OrderItemEntity q where q.order = :orderEntity"),
+})
 public class OrderItemEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private Integer id;
+    private Integer Id;
 
-    @Column(name="order_id")
+    @ManyToOne
+    @JoinColumn(name = "order_id")
     @NotNull
     private OrderEntity order;
 
-    @Column(name="item_id")
+    @ManyToOne
+    @JoinColumn(name = "item_id")
     @NotNull
     private ItemEntity item;
 
-    @Column(name="quantity")
+    @Column(name = "quantity")
     @NotNull
     private Integer quantity;
 
-    @Column(name="price")
+    @Column(name = "price")
     @NotNull
     private Integer price;
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        Id = id;
     }
 
     public OrderEntity getOrder() {
@@ -72,20 +74,5 @@ public class OrderItemEntity implements Serializable {
 
     public void setPrice(Integer price) {
         this.price = price;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

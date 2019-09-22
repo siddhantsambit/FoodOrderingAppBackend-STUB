@@ -1,10 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,79 +7,78 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * CategoryEntity class contains all the attributes to be mapped to all the fields in 'category' table in the database
+ */
 @Entity
-@Table(name="category", schema = "restaurantdb")
+@Table(name = "category")
+@NamedQueries({
+		@NamedQuery(name = "allCategories", query = "select q from CategoryEntity q"),
+		@NamedQuery(name = "categoryByUuid", query = "select q from CategoryEntity q where q.uuid = :uuid"),
+})
 public class CategoryEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-    @Column(name="uuid", unique = true)
-    @NotNull
-    @Size(max=200)
-    private String UUID;
+	@Column(name = "uuid")
+	@NotNull
+	@Size(max = 200)
+	private String uuid;
 
-    @Column(name="category_name")
-    @Size(max=255)
-    private String categoryName;
+	@Column(name = "category_name")
+	@NotNull
+	@Size(max = 255)
+	private String categoryName;
 
-    @ManyToMany
-    @JoinTable(name = "category_item", joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id"))
-    private List<ItemEntity> items = new ArrayList<>();
+	@ManyToMany
+	@JoinTable(name = "category_item", joinColumns = @JoinColumn(name = "category_id"),
+			inverseJoinColumns = @JoinColumn(name = "item_id"))
+	private List<ItemEntity> items = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
-    private List<RestaurantEntity> restaurants = new ArrayList<>();
+	@ManyToMany
+	@JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "category_id"),
+			inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
+	private List<RestaurantEntity> restaurants = new ArrayList<>();
 
+	public List<RestaurantEntity> getRestaurants() {
+		return restaurants;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setRestaurants(List<RestaurantEntity> restaurants) {
+		this.restaurants = restaurants;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public List<ItemEntity> getItems() {
+		return items;
+	}
 
-    public String getUUID() {
-        return UUID;
-    }
+	public void setItems(List<ItemEntity> items) {
+		this.items = items;
+	}
 
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public String getCategoryName() {
-        return categoryName;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
+	public String getUuid() {
+		return uuid;
+	}
 
-    public List<ItemEntity> getItems() { return items; }
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
-    public void setItems(List<ItemEntity> items) { this.items = items; }
+	public String getCategoryName() {
+		return categoryName;
+	}
 
-    public List<RestaurantEntity> getRestaurants() { return restaurants; }
-
-    public void setRestaurants(List<RestaurantEntity> restaurants) { this.restaurants = restaurants; }
-
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
 }

@@ -1,7 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.*;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,53 +7,53 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * CustomerEntity class contains all the attributes to be mapped to all the fields in 'customer' table in the database
+ */
 @Entity
-@Table(name="customer", schema = "restaurantdb")
-
+@Table(name = "customer")
 @NamedQueries({
-        @NamedQuery(name = "customerByContactNumber", query = "select u from CustomerEntity u where u.contactNumber = :contactNumber"),
-        @NamedQuery(name = "customerByUUID", query = "select u from CustomerEntity u where u.uuid = :uuid"),
+        @NamedQuery(name = "customerByContactNumber", query = "select c from CustomerEntity c where c.contactNumber = :contactNumber"),
+        @NamedQuery(name = "customerByUUID", query = "select c from CustomerEntity c where c.uuid = :uuid"),
 })
-
 public class CustomerEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
+    private Integer id;
 
-    @Column(name="uuid", unique = true)
+    @Column(name = "uuid")
     @NotNull
-    @Size(max=200)
+    @Size(max = 200)
     private String uuid;
 
-    @Column(name="firstname")
-    @Size(max=30)
+    @Column(name = "firstname")
     @NotNull
+    @Size(max = 30)
     private String firstName;
 
-    @Column(name="lastname")
-    @Size(max=30)
+    @Column(name = "lastname")
+    @Size(max = 30)
     private String lastName;
 
-    @Column(name="email")
-    @Size(max=50)
+    @Column(name = "email")
     @NotNull
+    @Size(max = 50)
     private String email;
 
-    @Column(name="contact_number", unique = true)
-    @Size(max=30)
+    @Column(name = "contact_number", unique = true)
     @NotNull
+    @Size(max = 30)
     private String contactNumber;
 
-    @Column(name="password")
+    @Column(name = "password")
     @NotNull
-    @Size(max=255)
+    @Size(max = 255)
     private String password;
 
-    @Column(name="salt")
+    @Column(name = "salt")
     @NotNull
-    @Size(max=255)
+    @Size(max = 255)
     private String salt;
 
     @OneToMany
@@ -63,15 +61,19 @@ public class CustomerEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "address_id"))
     private List<AddressEntity> addresses = new ArrayList<>();
 
-    public List<AddressEntity> getAddresses() { return addresses; }
+    public List<AddressEntity> getAddresses() {
+        return addresses;
+    }
 
-    public void setAddresses(List<AddressEntity> addresses) { this.addresses = addresses; }
+    public void setAddresses(List<AddressEntity> addresses) {
+        this.addresses = addresses;
+    }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -115,11 +117,11 @@ public class CustomerEntity implements Serializable {
         this.contactNumber = contactNumber;
     }
 
-    public String getPassword() {
+    public String getPassoword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassoword(String password) {
         this.password = password;
     }
 
@@ -130,21 +132,4 @@ public class CustomerEntity implements Serializable {
     public void setSalt(String salt) {
         this.salt = salt;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
 }
-
-

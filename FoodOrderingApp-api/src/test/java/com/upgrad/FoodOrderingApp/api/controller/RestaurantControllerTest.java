@@ -3,10 +3,11 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upgrad.FoodOrderingApp.api.model.RestaurantList;
 import com.upgrad.FoodOrderingApp.api.model.RestaurantListResponse;
-import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
-import com.upgrad.FoodOrderingApp.service.businness.ItemService;
-import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.business.CategoryService;
+import com.upgrad.FoodOrderingApp.service.business.CustomerService;
+import com.upgrad.FoodOrderingApp.service.business.ItemService;
+import com.upgrad.FoodOrderingApp.service.business.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.InvalidRatingException;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static com.upgrad.FoodOrderingApp.service.common.ItemType.NON_VEG;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -148,7 +150,7 @@ public class RestaurantControllerTest {
     @Test
     public void shouldNotGetRestaurantByNameIfNameIsEmpty() throws Exception {
         when(mockRestaurantService.restaurantsByName(anyString()))
-                .thenThrow(new RestaurantNotFoundException("RNF-003", "Restaurant name field should not be empty"));
+                .thenThrow(new RestaurantNotFoundException("RNF-003", "Restaurant name field should not be empty"));
 
         mockMvc
                 .perform(get("/restaurant/name/emptyString").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -342,7 +344,7 @@ public class RestaurantControllerTest {
 
         mockMvc
                 .perform(get("/restaurant/emptyString").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .header("authorization", "Bearer database_accesstoken2"))
+                        .header("authorization", "Bearer database_accesstoken2"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("code").value("RNF-002"));
         verify(mockCustomerService, times(0)).getCustomer("database_accesstoken2");
